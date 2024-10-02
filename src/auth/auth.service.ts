@@ -1,17 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UsersService } from 'src/users/users.service';
+import { LoginDto } from './dto/LoginDto';
+import { User } from 'src/types';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
+    private readonly userService: UsersService,
+    private readonly config: ConfigService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
+  async validateUser(email: string, pass: string): Promise<User | null> {
+    const user = await this.userService.findByEmail(email);
     if (user && user.password === pass) {
       const { password, ...result } = user;
       return result;
@@ -19,10 +23,27 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+  async login(data: LoginDto) {
+    const user = await this.validateUser(data.email, data.password);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const payload = {
+      sub: user.id,
+    };
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, {
+        expiresIn: `${this.config.get<{ accres_expiry: string }>('jwt').accres_expiry}h`,
+        audience: 'access',
+      }),
+      refresh_token: this.jwtService.sign(payload, {
+        expiresIn: `${this.config.get<{ refres_expiry: string }>('jwt').refres_expiry}d`,
+        audience: 'refresh',
+      }),
+      user,
     };
   }
 

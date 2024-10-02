@@ -10,9 +10,9 @@
 # Custom Exception handling done
 # Static Files Health Check Done 
 # Auth with passport (Email and Password, Google)
+# Prisma db setup done
 
 
-# Prisma db setup not done 
 # File upload chunk endpoint and normal endpoint not done
 # Dockrize the project
 # Testing

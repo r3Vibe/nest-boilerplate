@@ -63,6 +63,8 @@ async function bootstrap() {
       version: string;
     }>('project');
     const config = new DocumentBuilder()
+      .addBearerAuth()
+      .addCookieAuth('access_token')
       .setTitle(configInfo.name)
       .setDescription(configInfo.description)
       .setVersion(configInfo.version)

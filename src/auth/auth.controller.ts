@@ -2,60 +2,66 @@ import {
   Controller,
   HttpStatus,
   Post,
-  Request,
-  UseGuards,
   HttpCode,
+  Body,
+  ValidationPipe,
   Res,
-  Get,
 } from '@nestjs/common';
-import { LocalAuthGuard } from './Guards/local-auth.guard';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './Guards/jwt-auth.guard';
-import { Response } from 'express';
-import { GoogleAuthGuard } from './Guards/google-auth.guard';
-import { CustomLoggerService } from 'src/custom-logger/custom-logger.service';
+import { UsersService } from 'src/users/users.service';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from './dto/CreateUserDto';
+import { LoginDto } from './dto/LoginDto';
+import { LoginResponseDto } from './dto/LoginResponseDto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
+@ApiTags('Authentication')
 export class AuthController {
   constructor(
-    private authService: AuthService,
-    private logger: CustomLoggerService,
+    private readonly authService: AuthService,
+    private readonly userService: UsersService,
+    private readonly config: ConfigService,
   ) {}
 
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async login(@Request() req, @Res({ passthrough: true }) response: Response) {
-    const { access_token } = await this.authService.login(req.user);
+  @HttpCode(HttpStatus.CREATED)
+  @Post('register')
+  @ApiCreatedResponse({
+    description: 'Registration Successful',
+    type: CreateUserDto,
+  })
+  async register(@Body(ValidationPipe) data: CreateUserDto) {
+    return this.userService.create(data);
+  }
 
-    response.cookie('jwt', access_token, {
+  @HttpCode(HttpStatus.OK)
+  @Post('login')
+  @ApiOkResponse({
+    description: 'Login Successful',
+    type: LoginResponseDto,
+  })
+  async login(
+    @Body(ValidationPipe) data: LoginDto,
+    @Res({ passthrough: true }) res,
+  ) {
+    const tokens = await this.authService.login(data);
+
+    res.cookie('access_token', tokens.access_token, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-      secure: false,
+      maxAge: this.config.get<{ accres_expiry: string }>('jwt').accres_expiry,
       sameSite: 'lax',
+      secure:
+        this.config.get<string>('NODE_ENV') === 'development' ? false : true,
     });
 
-    return {
-      jwt: access_token,
-    };
-  }
+    res.cookie('refresh_token', tokens.refresh_token, {
+      httpOnly: true,
+      maxAge: this.config.get<{ refresh_expiry: string }>('jwt').refresh_expiry,
+      sameSite: 'lax',
+      secure:
+        this.config.get<string>('NODE_ENV') === 'development' ? false : true,
+    });
 
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
-  @Post('me')
-  async me(@Request() req) {
-    return req.user;
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(GoogleAuthGuard)
-  @Get('test')
-  async test() {}
-
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(GoogleAuthGuard)
-  @Get('callback/google')
-  async test2(@Request() req) {
-    return this.authService.googleLogin(req);
+    return tokens;
   }
 }
