@@ -1,0 +1,15 @@
+services:
+  nest-app:
+    image: nestjs-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    env_file:
+      - .env
+    volumes:
+      - ./:/usr/src/app
+    restart: unless-stopped
+volumes:
+  pgdata:
