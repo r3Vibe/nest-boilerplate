@@ -21,4 +21,5 @@ export default () => ({
     refres_expiry: process.env.JWT_REFRESH_EXPIRY_DAYS,
     algo: process.env.JWT_ALGO,
   },
+  fallbackLanguage: process.env.FALLBACK_LANGUAGE,
 });

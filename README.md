@@ -11,8 +11,10 @@
 # Static Files Health Check Done 
 # Auth with passport (Email and Password, Google)
 # Prisma db setup done
+# Multi language support Done
 
+# Dockrize the project (Has Issues)
 
 # File upload chunk endpoint and normal endpoint not done
-# Dockrize the project
 # Testing
+# Websocket 

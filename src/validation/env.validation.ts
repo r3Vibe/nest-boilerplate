@@ -18,4 +18,6 @@ export const envSchema = Joi.object({
   JWT_ACCESS_EXPIRY_HOURS: Joi.string().required(),
   JWT_REFRESH_EXPIRY_DAYS: Joi.string().required(),
   JWT_ALGO: Joi.string().valid('HS256', 'HS512').required(),
+
+  FALLBACK_LANGUAGE: Joi.string().required(),
 });
