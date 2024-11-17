@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { makePassword } from 'src/helper/password';
 
 export type userDocument = HydratedDocument<User>;
 
@@ -25,3 +26,8 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre('save', async function (next) {
+  this.password = await makePassword(this.password);
+  next();
+});

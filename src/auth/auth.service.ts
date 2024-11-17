@@ -5,6 +5,7 @@ import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './dto/LoginDto';
 import { User } from 'src/types';
 import { ConfigService } from '@nestjs/config';
+import { comparePassword } from 'src/helper/password';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,12 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<User | null> {
     const user = await this.userService.findByEmail(email);
-    if (user && user.password === pass) {
+
+    if (!user) {
+      return null;
+    }
+
+    if (await comparePassword(pass, user.password)) {
       const { password, ...result } = user;
       return result;
     }
