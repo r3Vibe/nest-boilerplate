@@ -1,35 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from 'src/auth/dto/CreateUserDto';
-import { DatabaseService } from 'src/database/database.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from './user.schema';
+import { Model } from 'mongoose';
+import { UserDto } from './dto/UserDto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async create(data: CreateUserDto) {
-    return await this.databaseService.user.create({
-      data,
-      select: {
-        id: true,
-        email: true,
-        first_name: true,
-        last_name: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+  async create(data: UserDto) {
+    const user = (await this.userModel.create(data)).toJSON();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = user;
+    return result;
   }
 
   async findByEmail(email: string) {
-    return await this.databaseService.user.findUnique({
-      where: { email },
-    });
+    return (await this.userModel.findOne({ email })).toJSON();
   }
 
   async findById(id: number) {
-    return await this.databaseService.user.findUnique({
-      where: { id },
-    });
+    return (await this.userModel.findById(id)).toJSON();
   }
 }

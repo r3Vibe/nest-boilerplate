@@ -5,14 +5,14 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './Strategies/jwt.strategy';
-import { GoogleStrategy } from './Strategies/google.strategy';
+// import { GoogleStrategy } from './Strategies/google.strategy';
 import { CustomLoggerService } from 'src/custom-logger/custom-logger.service';
-import { DatabaseModule } from 'src/database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from 'src/users/user.schema';
 
 @Module({
   imports: [
-    DatabaseModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -29,12 +29,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         },
       }),
     }),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   providers: [
     UsersService,
     AuthService,
     JwtStrategy,
-    GoogleStrategy,
+    // GoogleStrategy,
     CustomLoggerService,
   ],
   controllers: [AuthController],

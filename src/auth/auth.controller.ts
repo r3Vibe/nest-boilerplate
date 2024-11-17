@@ -4,16 +4,15 @@ import {
   Post,
   HttpCode,
   Body,
-  ValidationPipe,
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto } from './dto/CreateUserDto';
 import { LoginDto } from './dto/LoginDto';
 import { LoginResponseDto } from './dto/LoginResponseDto';
 import { ConfigService } from '@nestjs/config';
+import { UserDto } from 'src/users/dto/UserDto';
 
 @Controller('auth')
 @ApiTags('Authentication')
@@ -28,9 +27,9 @@ export class AuthController {
   @Post('register')
   @ApiCreatedResponse({
     description: 'Registration Successful',
-    type: CreateUserDto,
+    type: UserDto,
   })
-  async register(@Body(ValidationPipe) data: CreateUserDto) {
+  async register(@Body() data: UserDto) {
     return this.userService.create(data);
   }
 
@@ -40,10 +39,7 @@ export class AuthController {
     description: 'Login Successful',
     type: LoginResponseDto,
   })
-  async login(
-    @Body(ValidationPipe) data: LoginDto,
-    @Res({ passthrough: true }) res,
-  ) {
+  async login(@Body() data: LoginDto, @Res({ passthrough: true }) res) {
     const tokens = await this.authService.login(data);
 
     res.cookie('access_token', tokens.access_token, {

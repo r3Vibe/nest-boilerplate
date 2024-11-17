@@ -11,13 +11,15 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { DatabaseModule } from './database/database.module';
+import { MongooseModule } from '@nestjs/mongoose';
 import {
   AcceptLanguageResolver,
   HeaderResolver,
   I18nModule,
   QueryResolver,
 } from 'nestjs-i18n';
+import { Connection } from 'mongoose';
+import { JoiPipeModule } from 'nestjs-joi';
 
 @Module({
   imports: [
@@ -54,7 +56,22 @@ import {
     }),
     AuthModule,
     UsersModule,
-    DatabaseModule,
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URI'),
+        onConnectionCreate: (connection: Connection) => {
+          connection.on('connected', () => console.log('Database connected'));
+          return connection;
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    JoiPipeModule.forRoot({
+      pipeOpts: {
+        usePipeValidationException: true,
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [

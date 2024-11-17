@@ -7,11 +7,11 @@ export const envSchema = Joi.object({
 
   PROJECT_NAME: Joi.string().required(),
   PROJECT_DESC: Joi.string().required(),
-  PROJECT_VER: Joi.number().required(),
+  PROJECT_VER: Joi.string().required(),
 
-  GOOGLE_CLIENT_ID: Joi.string().required(),
-  GOOGLE_CLIENT_SECRET: Joi.string().required(),
-  GOOGLE_CALLBACK_URL: Joi.string().required(),
+  GOOGLE_CLIENT_ID: Joi.string().optional(),
+  GOOGLE_CLIENT_SECRET: Joi.string().optional(),
+  GOOGLE_CALLBACK_URL: Joi.string().optional(),
 
   JWT_SECRET: Joi.string().required(),
   JWT_ISS: Joi.string().required(),
@@ -20,4 +20,6 @@ export const envSchema = Joi.object({
   JWT_ALGO: Joi.string().valid('HS256', 'HS512').required(),
 
   FALLBACK_LANGUAGE: Joi.string().required(),
+
+  MONGODB_URI: Joi.string().required(),
 });

@@ -1,11 +1,9 @@
-import { $Enums } from '@prisma/client';
+import { Types } from 'mongoose';
 
 export type User = {
-  id: number;
+  _id: Types.ObjectId;
   email: string;
-  first_name: string;
-  last_name: string;
-  role: $Enums.Role;
+  name: string;
   createdAt: Date;
   updatedAt: Date;
 };
