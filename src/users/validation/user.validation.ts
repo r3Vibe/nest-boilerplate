@@ -5,5 +5,6 @@ export const CreateUserValidation = Joi.object({
   first_name: Joi.string().required().label('First Name'),
   last_name: Joi.string().required().label('Last Name'),
   email: Joi.string().email().required().label('Email'),
+  password: Joi.string().required().label('Password'),
   phone: Joi.string().required().custom(phoneValidation).label('Phone Number'),
 });

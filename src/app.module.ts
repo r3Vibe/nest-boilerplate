@@ -17,7 +17,14 @@ import {
 } from 'nestjs-i18n';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
+import { OTP } from './auth/entities/otp.entity';
+import { Session } from './auth/entities/session.entity';
+import { MagicLink } from './auth/entities/magic-link.entity';
+import { Token } from './auth/entities/token.entity';
+import { AuthFlow } from './auth/entities/flow.entity';
+import { JwtModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -59,12 +66,14 @@ import { User } from './users/entities/user.entity';
       useFactory: (configService: ConfigService) => ({
         type: 'mongodb',
         url: configService.getOrThrow('MONGODB_URI'),
-        entities: [User],
+        entities: [User, OTP, Session, MagicLink, Token, AuthFlow],
         synchronize:
           configService.getOrThrow('NODE_ENV') === 'production' ? false : true,
       }),
       inject: [ConfigService],
     }),
+    AuthModule,
+    JwtModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,15 +1,17 @@
+import { Session } from 'src/auth/entities/session.entity';
 import {
-  Column,
-  CreateDateColumn,
   Entity,
+  Column,
+  OneToMany,
   ObjectId,
   ObjectIdColumn,
+  CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('users')
 export class User {
-  @ObjectIdColumn()
+  @ObjectIdColumn({ primary: true })
   _id: ObjectId;
 
   @Column({ nullable: false })
@@ -18,15 +20,41 @@ export class User {
   @Column({ nullable: false })
   last_name: string;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ unique: true })
   email: string;
 
-  @Column({ unique: true, length: 10, nullable: true, default: null })
+  @Column({ nullable: true }) // For OTP-based accounts without a password
+  password: string;
+
+  @Column({ nullable: true })
   phone: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ default: false })
+  emailVerified: boolean;
+
+  @Column({ nullable: true })
+  twoFactorSecret: string; // For storing 2FA secret (if using TOTP)
+
+  @Column({ default: false })
+  twoFactorEnabled: boolean;
+
+  @Column({ default: true })
+  isActive: boolean; // For soft deletion or account deactivation
+
+  @OneToMany(() => Session, (session) => session.user)
+  sessions: Session[];
+
+  @CreateDateColumn({
+    nullable: true,
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: null, nullable: true })
+  @UpdateDateColumn({
+    nullable: true,
+    type: 'timestamp',
+    default: () => 'NOW()',
+  })
   updatedAt: Date;
 }
