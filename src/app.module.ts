@@ -9,20 +9,23 @@ import { envSchema } from './validation/env.validation';
 import { CustomLoggerModule } from './custom-logger/custom-logger.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { MongooseModule } from '@nestjs/mongoose';
 import {
   AcceptLanguageResolver,
   HeaderResolver,
   I18nModule,
   QueryResolver,
 } from 'nestjs-i18n';
-import { Connection } from 'mongoose';
-import { JoiPipeModule } from 'nestjs-joi';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [config],
+      validationSchema: envSchema,
+    }),
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
@@ -44,33 +47,23 @@ import { JoiPipeModule } from 'nestjs-joi';
         limit: 3,
       },
     ]),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [config],
-      validationSchema: envSchema,
-    }),
+
     CustomLoggerModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       exclude: ['/api/(.*)'],
     }),
-    AuthModule,
     UsersModule,
-    MongooseModule.forRootAsync({
+    TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
-        onConnectionCreate: (connection: Connection) => {
-          connection.on('connected', () => console.log('Database connected'));
-          return connection;
-        },
+      useFactory: (configService: ConfigService) => ({
+        type: 'mongodb',
+        url: configService.getOrThrow('MONGODB_URI'),
+        entities: [User],
+        synchronize:
+          configService.getOrThrow('NODE_ENV') === 'production' ? false : true,
       }),
       inject: [ConfigService],
-    }),
-    JoiPipeModule.forRoot({
-      pipeOpts: {
-        usePipeValidationException: true,
-      },
     }),
   ],
   controllers: [AppController],

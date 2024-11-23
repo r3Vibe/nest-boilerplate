@@ -2,7 +2,9 @@ import * as Joi from 'joi';
 
 // validate .env file for all the required fields
 export const envSchema = Joi.object({
-  NODE_ENV: Joi.string().valid('development', 'production').required(),
+  NODE_ENV: Joi.string()
+    .valid('development', 'production', 'staging')
+    .required(),
   PORT: Joi.number().port().default(3000),
 
   PROJECT_NAME: Joi.string().required(),
