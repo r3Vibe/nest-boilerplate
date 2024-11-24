@@ -29,4 +29,9 @@ export const envSchema = Joi.object({
   NEED_OTP_AFTER_LOGIN: Joi.boolean().required(),
 
   VERIFICATION_OTP_EXPIRY_MINUTES: Joi.number().optional(),
+
+  OTP_DELIVERY: Joi.string()
+    .valid('email', 'phone', 'both')
+    .optional()
+    .default('email'),
 });

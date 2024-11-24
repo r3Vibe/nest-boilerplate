@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from 'src/jwt/jwt.service';
 import { comparePassword } from 'src/helper/password';
 import { IUser } from 'src/types';
@@ -8,10 +12,11 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthFlow, Flow } from './entities/flow.entity';
 import { OTP } from './entities/otp.entity';
-import { Repository } from 'typeorm';
+import { ObjectId, Repository } from 'typeorm';
 import { makeToken } from 'src/helper/token';
 import { generateSecureOTP } from 'src/helper/otp';
 import * as moment from 'moment';
+import { ObjectId as MongodbObjectId } from 'mongodb';
 
 @Injectable()
 export class AuthService {
@@ -88,5 +93,13 @@ export class AuthService {
         user,
       };
     }
+  }
+
+  async getOTPFromFlow(flowId: ObjectId): Promise<OTP> {
+    return this.otpRepository.findOne({
+      where: {
+        flowId: new MongodbObjectId(flowId),
+      },
+    });
   }
 }
