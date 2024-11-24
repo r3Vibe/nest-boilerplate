@@ -52,6 +52,7 @@ export class UsersService {
         flowId: current_flow._id,
         expiresAt: moment(new Date()).add(otpExpMin, 'minutes').toISOString(),
         code: generateSecureOTP(),
+        userId: user._id,
       });
     } else {
       const payload = {

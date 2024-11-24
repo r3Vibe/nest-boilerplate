@@ -34,4 +34,11 @@ export const envSchema = Joi.object({
     .valid('email', 'phone', 'both')
     .optional()
     .default('email'),
+
+  SMTP_HOST: Joi.string().required(),
+  SMTP_PORT: Joi.string().required(),
+  SMTP_USER: Joi.string().required(),
+  SMTP_PASSWORD: Joi.string().required(),
+  SMTP_FROM_NAME: Joi.string().required(),
+  SMTP_FROM_EMAIL: Joi.string().required(),
 });

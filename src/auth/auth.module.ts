@@ -11,6 +11,8 @@ import { MagicLink } from './entities/magic-link.entity';
 import { Token } from './entities/token.entity';
 import { AuthFlow } from './entities/flow.entity';
 import { JwtModule as Jwt } from 'src/jwt/jwt.module';
+import { OTPSubscriber } from './otp.subscriber';
+import { MailerModule } from 'src/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -18,9 +20,10 @@ import { JwtModule as Jwt } from 'src/jwt/jwt.module';
     TypeOrmModule.forFeature([OTP, Session, MagicLink, Token, AuthFlow]),
     UsersModule,
     PassportModule,
+    MailerModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, OTPSubscriber],
   exports: [AuthService],
 })
 export class AuthModule {}

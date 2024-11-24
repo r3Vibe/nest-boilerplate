@@ -13,6 +13,7 @@ import {
   AcceptLanguageResolver,
   HeaderResolver,
   I18nModule,
+  I18nService,
   QueryResolver,
 } from 'nestjs-i18n';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -25,9 +26,36 @@ import { MagicLink } from './auth/entities/magic-link.entity';
 import { Token } from './auth/entities/token.entity';
 import { AuthFlow } from './auth/entities/flow.entity';
 import { JwtModule } from './jwt/jwt.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { MailerModule as Mailer } from './mailer/mailer.module';
 
 @Module({
   imports: [
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService, i18n: I18nService) => ({
+        transport: {
+          host: configService.getOrThrow('SMTP_HOST'),
+          port: configService.getOrThrow('SMTP_PORT'),
+          auth: {
+            user: configService.getOrThrow('SMTP_USER'),
+            pass: configService.getOrThrow('SMTP_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: `${configService.getOrThrow('SMTP_FROM_NAME')} <${configService.getOrThrow('SMTP_FROM_EMAIL')}>`,
+        },
+        template: {
+          dir: join(__dirname, 'emails'),
+          adapter: new HandlebarsAdapter({ t: i18n.hbsHelper }),
+          options: {
+            strict: true,
+          },
+        },
+      }),
+      inject: [ConfigService, I18nService],
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
@@ -40,6 +68,7 @@ import { JwtModule } from './jwt/jwt.module';
           path: join(__dirname, '/i18n/'),
           watch: true,
         },
+        viewEngine: 'hbs',
       }),
       resolvers: [
         { use: QueryResolver, options: ['lang'] },
@@ -74,6 +103,7 @@ import { JwtModule } from './jwt/jwt.module';
     }),
     AuthModule,
     JwtModule,
+    Mailer,
   ],
   controllers: [AppController],
   providers: [

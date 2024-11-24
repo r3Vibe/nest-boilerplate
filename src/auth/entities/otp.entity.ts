@@ -15,6 +15,9 @@ export class OTP {
   @ObjectIdColumn()
   flowId: ObjectId;
 
+  @ObjectIdColumn()
+  userId: ObjectId;
+
   @Column()
   code: string; // OTP code
 
