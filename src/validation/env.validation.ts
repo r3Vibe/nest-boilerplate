@@ -24,4 +24,9 @@ export const envSchema = Joi.object({
   FALLBACK_LANGUAGE: Joi.string().required(),
 
   MONGODB_URI: Joi.string().required(),
+
+  VERIFY_EMAIL_AFTER_REGISTRATION: Joi.boolean().required(),
+  NEED_OTP_AFTER_LOGIN: Joi.boolean().required(),
+
+  VERIFICATION_OTP_EXPIRY_MINUTES: Joi.number().optional(),
 });

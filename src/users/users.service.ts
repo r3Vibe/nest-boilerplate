@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { OTP } from 'src/auth/entities/otp.entity';
 import * as moment from 'moment';
 import { JwtService } from 'src/jwt/jwt.service';
-import { ITokens } from 'src/types';
+import { IResponse, ITokens } from 'src/types';
 import { generateSecureOTP } from 'src/helper/otp';
 import { makeToken } from 'src/helper/token';
 
@@ -26,22 +26,22 @@ export class UsersService {
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
-  async create(createUserDto: CreateUserDto): Promise<{
-    user: User;
-    tokens: ITokens;
-  }> {
+  async create(createUserDto: CreateUserDto): Promise<IResponse> {
     // check if verification is required after registration
-    const verifyMAIL = this.config.get('VERIFY_EMAIL_AFTER_REGISTRATION');
+    const verifyMAIL = Boolean(
+      this.config.get('VERIFY_EMAIL_AFTER_REGISTRATION'),
+    );
     const otpExpMin = this.config.get('VERIFICATION_OTP_EXPIRY_MINUTES');
 
     // create the user
     const user = await this.usersRepository.save(createUserDto);
     let tokens: ITokens = null;
+    let current_flow: AuthFlow = null;
 
     // if verification is required, save the flow and make otp
     if (verifyMAIL) {
       // create the flow
-      const flow = await this.flowRepository.save({
+      current_flow = await this.flowRepository.save({
         flow: Flow.VALIDATE,
         userId: user._id,
         token: makeToken(16),
@@ -49,7 +49,7 @@ export class UsersService {
 
       // save the otp
       await this.otpRepository.save({
-        flowId: flow._id,
+        flowId: current_flow._id,
         expiresAt: moment(new Date()).add(otpExpMin, 'minutes').toISOString(),
         code: generateSecureOTP(),
       });
@@ -61,8 +61,21 @@ export class UsersService {
       tokens = await this.jwtService.tokens(payload);
     }
 
+    const return_obj: IResponse = {
+      user: {
+        _id: user._id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone: user.phone,
+      },
+    };
+
+    if (tokens) return_obj.tokens = tokens;
+    if (current_flow) return_obj.current_flow = current_flow;
+
     // return the user
-    return { user, tokens };
+    return return_obj;
   }
 
   async findAll(): Promise<User[]> {

@@ -8,11 +8,11 @@ import {
 } from 'typeorm';
 
 export enum Flow {
-  OTP = 'otp',
+  OTP = 'otp_verification_pending',
   MAGIC_LINK = 'magic_link',
   TOKEN = 'token',
   NONE = 'none',
-  VALIDATE = 'validate',
+  VALIDATE = 'email_verification_pending',
 }
 
 @Entity('auth_flow')

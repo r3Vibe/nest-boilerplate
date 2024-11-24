@@ -4,12 +4,25 @@ import { JwtService } from 'src/jwt/jwt.service';
 import { comparePassword } from 'src/helper/password';
 import { IUser } from 'src/types';
 import { UsersService } from 'src/users/users.service';
+import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AuthFlow, Flow } from './entities/flow.entity';
+import { OTP } from './entities/otp.entity';
+import { Repository } from 'typeorm';
+import { makeToken } from 'src/helper/token';
+import { generateSecureOTP } from 'src/helper/otp';
+import * as moment from 'moment';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly config: ConfigService,
+    @InjectRepository(AuthFlow)
+    private readonly flowRepository: Repository<AuthFlow>,
+    @InjectRepository(OTP)
+    private readonly otpRepository: Repository<OTP>,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<IUser | null> {
@@ -26,22 +39,54 @@ export class AuthService {
     return null;
   }
 
-  async login(data: any) {
+  async login(
+    data: any,
+  ): Promise<
+    | { current_flow: { flow: Flow; flowId: string } }
+    | { user: IUser; access_token: string; refresh_token: string }
+  > {
     const user = await this.validateUser(data.email, data.password);
+    let current_flow = null;
 
     if (!user) {
       throw new UnauthorizedException();
     }
 
-    const payload = {
-      sub: user._id,
-    };
+    const otpNeeded = this.config.get('NEED_OTP_AFTER_LOGIN');
+    const otpExpMin = this.config.get('VERIFICATION_OTP_EXPIRY_MINUTES');
 
-    const tokens = await this.jwtService.tokens(payload);
+    if (otpNeeded) {
+      // create the flow
+      current_flow = await this.flowRepository.save({
+        flow: Flow.OTP,
+        userId: user._id,
+        token: makeToken(16),
+      });
 
-    return {
-      ...tokens,
-      user,
-    };
+      // save the otp
+      await this.otpRepository.save({
+        flowId: current_flow._id,
+        expiresAt: moment(new Date()).add(otpExpMin, 'minutes').toISOString(),
+        code: generateSecureOTP(),
+      });
+
+      return {
+        current_flow: {
+          flow: current_flow.flow,
+          flowId: current_flow._id,
+        },
+      };
+    } else {
+      const payload = {
+        sub: user._id,
+      };
+
+      const tokens = await this.jwtService.tokens(payload);
+
+      return {
+        ...tokens,
+        user,
+      };
+    }
   }
 }

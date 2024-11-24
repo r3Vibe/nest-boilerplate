@@ -32,7 +32,10 @@ export class AuthController {
     type: CreateUserDto,
   })
   async register(@Body() data: CreateUserDto, @Res({ passthrough: true }) res) {
+    // create the user
     const userData = await this.userService.create(data);
+
+    // if user has tokens set them in the cookie
     if (userData.tokens) {
       res.cookie('access_token', userData.tokens.access_token, {
         httpOnly: true,
@@ -51,6 +54,8 @@ export class AuthController {
           this.config.get<string>('NODE_ENV') === 'development' ? false : true,
       });
     }
+
+    // retutn the user data
     return userData;
   }
 
@@ -64,24 +69,29 @@ export class AuthController {
     @Body() data: LoginUserByEmailPassDto,
     @Res({ passthrough: true }) res,
   ) {
-    const tokens = await this.authService.login(data);
+    const tokens_or_flow = await this.authService.login(data);
 
-    res.cookie('access_token', tokens.access_token, {
-      httpOnly: true,
-      maxAge: this.config.get<{ accres_expiry: string }>('jwt').accres_expiry,
-      sameSite: 'lax',
-      secure:
-        this.config.get<string>('NODE_ENV') === 'development' ? false : true,
-    });
+    if ('current_flow' in tokens_or_flow) {
+      return tokens_or_flow.current_flow;
+    } else {
+      res.cookie('access_token', tokens_or_flow.access_token, {
+        httpOnly: true,
+        maxAge: this.config.get<{ accres_expiry: string }>('jwt').accres_expiry,
+        sameSite: 'lax',
+        secure:
+          this.config.get<string>('NODE_ENV') === 'development' ? false : true,
+      });
 
-    res.cookie('refresh_token', tokens.refresh_token, {
-      httpOnly: true,
-      maxAge: this.config.get<{ refresh_expiry: string }>('jwt').refresh_expiry,
-      sameSite: 'lax',
-      secure:
-        this.config.get<string>('NODE_ENV') === 'development' ? false : true,
-    });
+      res.cookie('refresh_token', tokens_or_flow.refresh_token, {
+        httpOnly: true,
+        maxAge: this.config.get<{ refresh_expiry: string }>('jwt')
+          .refresh_expiry,
+        sameSite: 'lax',
+        secure:
+          this.config.get<string>('NODE_ENV') === 'development' ? false : true,
+      });
 
-    return tokens;
+      return tokens_or_flow;
+    }
   }
 }

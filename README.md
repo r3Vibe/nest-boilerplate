@@ -1,3 +1,6 @@
 - [x] TypeORM Setup
-- [ ] Authentication
-- [ ] Profile
+- [x] Login By Email and Password
+- [] Login By OTP
+- [] Login By Magic Link
+
+

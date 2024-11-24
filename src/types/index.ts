@@ -1,4 +1,6 @@
 import { ObjectId } from 'mongodb';
+import { AuthFlow } from 'src/auth/entities/flow.entity';
+import { User } from 'src/users/entities/user.entity';
 
 export interface IUser {
   _id: ObjectId;
@@ -13,4 +15,10 @@ export interface IUser {
 export interface ITokens {
   access_token: string;
   refresh_token: string;
+}
+
+export interface IResponse {
+  user: Partial<User>;
+  tokens?: ITokens;
+  current_flow?: Partial<AuthFlow>;
 }
