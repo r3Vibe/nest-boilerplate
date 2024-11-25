@@ -77,6 +77,7 @@ import { CommonModule } from './common/common.module';
           path: join(__dirname, '/i18n/'),
           watch: true,
         },
+        typesOutputPath: join(__dirname, '/generated/i18n.generated.ts'),
         viewEngine: 'hbs',
       }),
       resolvers: [

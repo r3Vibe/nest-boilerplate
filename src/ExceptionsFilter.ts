@@ -32,16 +32,19 @@ export class AllExceptionFilter extends BaseExceptionFilter {
       response: '',
     };
 
-    console.log(i18n.lang);
-
     if (exception instanceof HttpException) {
       ResponseObj.statusCode = exception.getStatus();
-      ResponseObj.response = (exception.getResponse() as any).message;
+      if (exception.getStatus() === 500) {
+        ResponseObj.response = i18n.translate('error.unknown' as never, {
+          lang: i18n.lang,
+        });
+      } else {
+        ResponseObj.response = i18n.translate(exception.message as never, {
+          lang: i18n.lang,
+        });
+      }
     } else if (exception instanceof Error) {
-      if ('name' in exception && exception.name === 'CastError') {
-        ResponseObj.statusCode = HttpStatus.BAD_REQUEST;
-        ResponseObj.response = exception.message.replaceAll(/\n/g, ' ');
-      } else if ('code' in exception && exception.code === 11000) {
+      if ('code' in exception && exception.code === 11000) {
         const duplicateKeyMessage = (exception as any).message;
         const match = duplicateKeyMessage.match(
           /index: (\w+).*dup key: \{ (.+?): "(.+?)" \}/,
@@ -51,14 +54,19 @@ export class AllExceptionFilter extends BaseExceptionFilter {
         const value = match[3];
 
         ResponseObj.statusCode = HttpStatus.CONFLICT;
-        ResponseObj.response = `${field}: ${value} already exists.`;
+        ResponseObj.response = i18n.t('error.duplicate' as never, {
+          lang: i18n.lang,
+          args: { field, value },
+        });
       } else {
         ResponseObj.statusCode = HttpStatus.UNPROCESSABLE_ENTITY;
         ResponseObj.response = exception.message.replaceAll(/\n/g, ' ');
       }
     } else {
       ResponseObj.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-      ResponseObj.response = 'Internal Server Error';
+      ResponseObj.response = i18n.translate('error.unknown' as never, {
+        lang: i18n.lang,
+      });
     }
 
     response.status(ResponseObj.statusCode).json(ResponseObj);
