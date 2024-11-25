@@ -5,8 +5,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config/config';
-import { envSchema } from './validation/env.validation';
-import { CustomLoggerModule } from './custom-logger/custom-logger.module';
+import { envSchema } from './common/validation/env.validation';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import {
@@ -25,10 +24,9 @@ import { Session } from './auth/entities/session.entity';
 import { MagicLink } from './auth/entities/magic-link.entity';
 import { Token } from './auth/entities/token.entity';
 import { AuthFlow } from './auth/entities/flow.entity';
-import { JwtModule } from './jwt/jwt.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { MailerModule as Mailer } from './mailer/mailer.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -55,6 +53,17 @@ import { MailerModule as Mailer } from './mailer/mailer.module';
         },
       }),
       inject: [ConfigService, I18nService],
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mongodb',
+        url: configService.getOrThrow('MONGODB_URI'),
+        entities: [User, OTP, Session, MagicLink, Token, AuthFlow],
+        synchronize:
+          configService.getOrThrow('NODE_ENV') === 'production' ? false : true,
+      }),
+      inject: [ConfigService],
     }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -83,27 +92,13 @@ import { MailerModule as Mailer } from './mailer/mailer.module';
         limit: 3,
       },
     ]),
-
-    CustomLoggerModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       exclude: ['/api/(.*)'],
     }),
     UsersModule,
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mongodb',
-        url: configService.getOrThrow('MONGODB_URI'),
-        entities: [User, OTP, Session, MagicLink, Token, AuthFlow],
-        synchronize:
-          configService.getOrThrow('NODE_ENV') === 'production' ? false : true,
-      }),
-      inject: [ConfigService],
-    }),
     AuthModule,
-    JwtModule,
-    Mailer,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [

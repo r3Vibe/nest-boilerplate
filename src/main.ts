@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { VersioningType } from '@nestjs/common';
 import { AllExceptionFilter } from './ExceptionsFilter';
-import { CustomLoggerService } from './custom-logger/custom-logger.service';
+import { CustomLoggerService } from './common/custom-logger/custom-logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

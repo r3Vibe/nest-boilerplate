@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
-import { JwtService } from 'src/jwt/jwt.service';
+import { JwtService } from 'src/common/jwt/jwt.service';
 import { comparePassword } from 'src/helper/password';
 import { IUser } from 'src/types';
 import { UsersService } from 'src/users/users.service';

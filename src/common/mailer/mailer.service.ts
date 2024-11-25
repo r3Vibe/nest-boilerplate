@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService as Mailer } from '@nestjs-modules/mailer';
 import { I18nContext, I18nService } from 'nestjs-i18n';
-import { CustomLoggerService } from 'src/custom-logger/custom-logger.service';
+import { CustomLoggerService } from 'src/common/custom-logger/custom-logger.service';
 
 @Injectable()
 export class MailerService {

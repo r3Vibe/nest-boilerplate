@@ -11,9 +11,9 @@ export const envSchema = Joi.object({
   PROJECT_DESC: Joi.string().required(),
   PROJECT_VER: Joi.string().required(),
 
-  GOOGLE_CLIENT_ID: Joi.string().optional(),
-  GOOGLE_CLIENT_SECRET: Joi.string().optional(),
-  GOOGLE_CALLBACK_URL: Joi.string().optional(),
+  GOOGLE_CLIENT_ID: Joi.string().optional().allow(''),
+  GOOGLE_CLIENT_SECRET: Joi.string().optional().allow(''),
+  GOOGLE_CALLBACK_URL: Joi.string().optional().allow(''),
 
   JWT_SECRET: Joi.string().required(),
   JWT_ISS: Joi.string().required(),

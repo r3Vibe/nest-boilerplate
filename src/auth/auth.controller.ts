@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import { LoginUserByEmailPassDto } from 'src/users/dto/loginbyemail.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { CreateUserValidation } from 'src/users/validation/user.validation';
-import { JoiSchema } from 'src/validation/joiSchema.validation';
+import { JoiSchema } from 'src/common/validation/joiSchema.validation';
 import { UsersService } from 'src/users/users.service';
 
 @ApiTags('Authentication')

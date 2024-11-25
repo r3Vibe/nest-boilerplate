@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import { phoneValidation } from 'src/validation/custom.validation';
+import { phoneValidation } from 'src/common/validation/custom.validation';
 
 export const CreateUserValidation = Joi.object({
   first_name: Joi.string().required().label('First Name'),

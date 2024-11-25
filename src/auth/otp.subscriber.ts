@@ -7,7 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { OTP } from './entities/otp.entity';
 import { UsersService } from 'src/users/users.service';
-import { MailerService } from 'src/mailer/mailer.service';
+import { MailerService } from 'src/common/mailer/mailer.service';
 
 @EventSubscriber()
 export class OTPSubscriber implements EntitySubscriberInterface<OTP> {

@@ -9,7 +9,7 @@ import { AuthFlow, Flow } from 'src/auth/entities/flow.entity';
 import { ConfigService } from '@nestjs/config';
 import { OTP } from 'src/auth/entities/otp.entity';
 import * as moment from 'moment';
-import { JwtService } from 'src/jwt/jwt.service';
+import { JwtService } from 'src/common/jwt/jwt.service';
 import { IResponse, ITokens } from 'src/types';
 import { generateSecureOTP } from 'src/helper/otp';
 import { makeToken } from 'src/helper/token';
@@ -34,7 +34,9 @@ export class UsersService {
     const otpExpMin = this.config.get('VERIFICATION_OTP_EXPIRY_MINUTES');
 
     // create the user
-    const user = await this.usersRepository.save(createUserDto);
+    const user = await this.usersRepository.save({
+      ...createUserDto,
+    });
     let tokens: ITokens = null;
     let current_flow: AuthFlow = null;
 
