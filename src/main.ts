@@ -1,4 +1,4 @@
-import { NestFactory, HttpAdapterHost } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
@@ -6,22 +6,11 @@ import helmet from 'helmet';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { VersioningType } from '@nestjs/common';
-import { AllExceptionFilter } from './ExceptionsFilter';
-import { CustomLoggerService } from './common/custom-logger/custom-logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
-
-  const logger = app.get(CustomLoggerService);
-
-  // setup custom exception filter
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionFilter(httpAdapter));
-
-  // use logger
-  app.useLogger(logger);
 
   // Get ConfigService from the application context
   const configService = app.get(ConfigService);
@@ -78,7 +67,5 @@ async function bootstrap() {
   // start server
 
   await app.listen(port);
-
-  logger.log(`Application is running on port: ${port}`);
 }
 bootstrap();
