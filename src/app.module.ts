@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CommonModule } from './common/common.module';
+import configuration from './config/configuration';
+import { envSchema } from './common/validation/env.validation';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import config from './config/config';
-import { envSchema } from './validation/env.validation';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import {
   AcceptLanguageResolver,
   HeaderResolver,
@@ -15,58 +16,79 @@ import {
   I18nService,
   QueryResolver,
 } from 'nestjs-i18n';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
+    JwtModule.registerAsync({
+      global: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        secret: config.get<{ secret: string }>('jwt')?.secret,
+        signOptions: {
+          algorithm: config.get<{ algorithm: string }>('jwt')?.algorithm as any,
+          issuer: config.get<{ issuer: string }>('jwt')?.issuer,
+        },
+        verifyOptions: {
+          algorithms: [
+            config.get<{ algorithm: string }>('jwt')?.algorithm as any,
+          ],
+          issuer: config.get<{ issuer: string }>('jwt')?.issuer,
+        },
+      }),
+    }),
+    TypeOrmModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        type: configService.getOrThrow('database').type,
+        url: configService.getOrThrow('database').uri,
+        autoLoadEntities: true,
+        synchronize:
+          configService.getOrThrow('NODE_ENV') === 'production' ? false : true,
+      }),
+      inject: [ConfigService],
+    }),
     MailerModule.forRootAsync({
+      inject: [ConfigService, I18nService],
       useFactory: (configService: ConfigService, i18n: I18nService) => ({
         transport: {
-          host: configService.getOrThrow('SMTP_HOST'),
-          port: configService.getOrThrow('SMTP_PORT'),
+          host: configService.getOrThrow('email').smtpHost,
+          port: configService.getOrThrow('email').smtpPort,
+          secure: configService.getOrThrow('email').secure,
           auth: {
-            user: configService.getOrThrow('SMTP_USER'),
-            pass: configService.getOrThrow('SMTP_PASSWORD'),
+            user: configService.getOrThrow('email').smtpUser,
+            pass: configService.getOrThrow('email').smtpPassword,
           },
         },
         defaults: {
-          from: `${configService.getOrThrow('SMTP_FROM_NAME')} <${configService.getOrThrow('SMTP_FROM_EMAIL')}>`,
+          from: `${configService.getOrThrow('email').smtpFromName} <${configService.getOrThrow('email').smtpFromEmail}>`,
         },
         template: {
-          dir: join(__dirname, 'emails'),
+          dir: join(__dirname, 'email_templates'),
           adapter: new HandlebarsAdapter({ t: i18n.hbsHelper }),
           options: {
             strict: true,
           },
         },
       }),
-      inject: [ConfigService, I18nService],
-    }),
-    TypeOrmModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        type: 'mongodb',
-        url: configService.getOrThrow('MONGODB_URI'),
-        entities: [],
-        synchronize:
-          configService.getOrThrow('NODE_ENV') === 'production' ? false : true,
-      }),
-      inject: [ConfigService],
-    }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [config],
-      validationSchema: envSchema,
     }),
     I18nModule.forRootAsync({
+      inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
+        fallbackLanguage: configService.getOrThrow('i18n').fallbackLanguage,
         loaderOptions: {
           path: join(__dirname, '/i18n/'),
           watch: true,
         },
-        // typesOutputPath: join(__dirname, '/generated/i18n.generated.ts'),
+        typesOutputPath:
+          configService.getOrThrow('general').nodeEnv === 'production'
+            ? join(__dirname, '/i18n/i18n-types.ts')
+            : resolve(__dirname, '../src/i18n/i18n-types.ts'),
         viewEngine: 'hbs',
       }),
       resolvers: [
@@ -74,7 +96,10 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         AcceptLanguageResolver,
         new HeaderResolver(['x-lang']),
       ],
-      inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      exclude: ['/api/(.*)'],
     }),
     ThrottlerModule.forRoot([
       {
@@ -82,10 +107,14 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         limit: 3,
       },
     ]),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-      exclude: ['/api/(.*)'],
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+      validationSchema: envSchema,
     }),
+    CommonModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [

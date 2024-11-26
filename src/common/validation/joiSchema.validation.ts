@@ -1,6 +1,6 @@
-import { UsePipes, applyDecorators } from '@nestjs/common';
 import * as Joi from 'joi';
-import { ValidationPipe } from 'src/pipe/validation.pipe';
+import { UsePipes, applyDecorators } from '@nestjs/common';
+import { ValidationPipe } from '../pipe/validation.pipe';
 
 export function JoiSchema(
   schema: Joi.ObjectSchema,

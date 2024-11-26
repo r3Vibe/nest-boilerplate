@@ -1,26 +1,49 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as compression from 'compression';
-import * as cookieParser from 'cookie-parser';
-import helmet from 'helmet';
+
 import { ConfigService } from '@nestjs/config';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { VersioningType } from '@nestjs/common';
+
+import * as cookieParser from 'cookie-parser';
+import * as compression from 'compression';
+import helmet from 'helmet';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { CustomLoggerService } from './common/custom-logger/custom-logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
 
-  // Get ConfigService from the application context
-  const configService = app.get(ConfigService);
-  const env = configService.get<string>('NODE_ENV');
-  const port = configService.get<number>('port');
+  // use custom logger
+  const logger = app.get(CustomLoggerService);
+  app.useLogger(logger);
 
-  // set url to /api
+  // get configurastion
+  const configService = app.get(ConfigService);
+
+  // enable versioning
+  app.enableVersioning({
+    type: VersioningType.URI,
+    prefix: 'v',
+    defaultVersion: '1',
+  });
+
+  // add a uri prefix
   app.setGlobalPrefix('api');
 
-  // allow cross origin
+  // enable cookies
+  app.use(cookieParser());
+
+  // enable compression
+  app.use(compression());
+
+  // enable helmet
+  app.use(helmet());
+
+  const env = configService.get('general').nodeEnv;
+
+  // enable cors
   app.enableCors({
     origin:
       env === 'development'
@@ -28,35 +51,19 @@ async function bootstrap() {
         : ['https://mydomain.com'],
   });
 
-  // enable gzip to compress response
-  app.use(compression());
-
-  // enable cookies
-  app.use(cookieParser());
-
-  // enable helmet for security
-  app.use(helmet());
-
-  // setup versioning
-  app.enableVersioning({
-    type: VersioningType.URI,
-    prefix: 'v',
-    defaultVersion: '1',
-  });
-
   // setup swagger docs only for development
   if (env === 'development') {
     const configInfo = configService.get<{
-      name: string;
-      description: string;
-      version: string;
-    }>('project');
+      projectName: string;
+      projectDesc: string;
+      projectVersion: string;
+    }>('swagger');
     const config = new DocumentBuilder()
       .addBearerAuth()
       .addCookieAuth('access_token')
-      .setTitle(configInfo.name)
-      .setDescription(configInfo.description)
-      .setVersion(configInfo.version)
+      .setTitle(configInfo.projectName)
+      .setDescription(configInfo.projectDesc)
+      .setVersion(configInfo.projectVersion)
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
@@ -64,8 +71,16 @@ async function bootstrap() {
     SwaggerModule.setup('docs', app, document);
   }
 
-  // start server
+  await app.listen(configService.get('general').port);
 
-  await app.listen(port);
+  logger.log(
+    `Application is running on: ${await app.getUrl()} in ${env} mode`,
+    'CustomLogger',
+  );
+
+  logger.log(
+    `API Docs Available on: ${await app.getUrl()}/docs in ${env} mode`,
+    'CustomLogger',
+  );
 }
 bootstrap();
