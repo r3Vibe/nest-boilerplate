@@ -7,12 +7,12 @@ export class LoginUserDto {
     required: false,
     example: 'o5N7S@example.com',
   })
-  email?: string;
+  email: string;
 
   @ApiProperty({
     description: 'Password for the user',
     required: false,
     example: 'Ps#12354',
   })
-  password?: string;
+  password: string;
 }

@@ -54,10 +54,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() data: LoginUserDto) {
-    this.authService.login(data);
+    const res = await this.authService.login(data);
 
     return {
-      messages: messages.success,
+      res,
+      message: messages.success,
     };
   }
 }

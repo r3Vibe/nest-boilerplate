@@ -19,5 +19,8 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 
   async beforeInsert(event: InsertEvent<User>) {
     event.entity.password = await makePassword(event.entity.password);
+    event.entity.isActive = true;
+    event.entity.twoFactorEnabled = false;
+    event.entity.twoFactorSecret = '';
   }
 }
