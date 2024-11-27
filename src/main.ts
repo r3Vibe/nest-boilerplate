@@ -9,11 +9,18 @@ import * as compression from 'compression';
 import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { CustomLoggerService } from './common/custom-logger/custom-logger.service';
+import { TransformResponseInterceptor } from './common/CustomResponse';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from './i18n/i18n-types';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
+
+  // custom response
+  const i18n = app.get(I18nService<I18nTranslations>);
+  app.useGlobalInterceptors(new TransformResponseInterceptor(i18n));
 
   // use custom logger
   const logger = app.get(CustomLoggerService);

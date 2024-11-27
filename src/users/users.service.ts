@@ -11,6 +11,10 @@ export class UsersService {
   ) {}
 
   async registerEmailandPassword(data: CreateUserDto) {
-    return this.usersRepository.create(data);
+    return this.usersRepository.save(data);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { email } });
   }
 }
