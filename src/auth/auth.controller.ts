@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   HttpCode,
   HttpStatus,
@@ -30,5 +31,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @JoiSchema(CreateUserEmailPassValidation, 'body')
   @Post('register-email-password')
-  async registerEmail() {}
+  async registerEmailandPassword(@Body() data: CreateUserDto) {
+    return this.authService.registerEmailandPassword(data);
+  }
 }
