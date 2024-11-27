@@ -1,19 +1,16 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import { LocalAuthGuard } from './Guards/local.guard';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JoiSchema } from 'src/common/validation/joiSchema.validation';
 import { CreateUserEmailPassValidation } from './auth.validation';
 import messages from 'src/common/messages';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -22,7 +19,6 @@ export class AuthController {
 
   @ApiCreatedResponse({
     description: 'New User Created Successfully.',
-    status: HttpStatus.CREATED,
     type: CreateUserDto,
   })
   @ApiOperation({
@@ -44,6 +40,24 @@ export class AuthController {
         phone: user.phone,
       },
       message: messages.success,
+    };
+  }
+
+  @ApiOkResponse({
+    description: 'Login Successfully.',
+    type: LoginUserDto,
+  })
+  @ApiOperation({
+    summary: 'Login with Email and Password',
+    description: 'Basic Email and Password Based Login',
+  })
+  @HttpCode(HttpStatus.OK)
+  @Post('login')
+  async login(@Body() data: LoginUserDto) {
+    this.authService.login(data);
+
+    return {
+      messages: messages.success,
     };
   }
 }
