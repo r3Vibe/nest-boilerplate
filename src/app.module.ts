@@ -46,7 +46,11 @@ import { JwtModule } from '@nestjs/jwt';
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         type: configService.getOrThrow('database').type,
-        url: configService.getOrThrow('database').uri,
+        host: configService.getOrThrow('database').host,
+        port: configService.getOrThrow('database').port,
+        username: configService.getOrThrow('database').username,
+        password: configService.getOrThrow('database').password,
+        database: configService.getOrThrow('database').name,
         autoLoadEntities: true,
         synchronize:
           configService.getOrThrow('NODE_ENV') === 'production' ? false : true,

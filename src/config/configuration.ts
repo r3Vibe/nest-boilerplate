@@ -26,6 +26,11 @@ export default () => ({
   database: {
     uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/nestbp',
     type: process.env.DB_TYPE || 'mongodb',
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 27017,
+    username: process.env.DB_USER || '',
+    password: process.env.DB_PASSWORD || '',
+    name: process.env.DB_NAME || 'bp',
   },
   auth: {
     verifyEmailAfterRegistration:
