@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ApiCreatedResponse,
@@ -11,11 +18,15 @@ import { JoiSchema } from 'src/common/validation/joiSchema.validation';
 import { CreateUserEmailPassValidation } from './auth.validation';
 import messages from 'src/common/messages';
 import { LoginUserDto } from './dto/login-user.dto';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private config: ConfigService,
+  ) {}
 
   @ApiCreatedResponse({
     description: 'New User Created Successfully.',
@@ -29,6 +40,7 @@ export class AuthController {
   @JoiSchema(CreateUserEmailPassValidation, 'body')
   @Post('register')
   async registerEmailandPassword(@Body() data: CreateUserDto) {
+    return null;
     const user = await this.authService.registerEmailandPassword(data);
 
     return {
@@ -53,11 +65,29 @@ export class AuthController {
   })
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() data: LoginUserDto) {
-    const res = await this.authService.login(data);
+  async login(@Body() data: LoginUserDto, @Res({ passthrough: true }) resp) {
+    const tokens = await this.authService.login(data);
+
+    resp.cookie('access_token', tokens.access_token, {
+      httpOnly: true,
+      maxAge: this.config.get<{ accessExpiryHours: string }>('jwt')
+        .accessExpiryHours,
+      sameSite: 'lax',
+      secure:
+        this.config.get<string>('NODE_ENV') === 'development' ? false : true,
+    });
+
+    resp.cookie('refresh_token', tokens.refresh_token, {
+      httpOnly: true,
+      maxAge: this.config.get<{ refreshExpiryDays: string }>('jwt')
+        .refreshExpiryDays,
+      sameSite: 'lax',
+      secure:
+        this.config.get<string>('NODE_ENV') === 'development' ? false : true,
+    });
 
     return {
-      res,
+      tokens,
       message: messages.success,
     };
   }

@@ -10,6 +10,12 @@ export type I18nTranslations = {
         "success_mail": string;
         "error_mail": string;
     };
+    "error": {
+        "required": string;
+        "unknown": string;
+        "empty": string;
+        "email": string;
+    };
 };
 /* prettier-ignore */
 export type I18nPath = Path<I18nTranslations>;

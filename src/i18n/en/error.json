@@ -1,0 +1,6 @@
+{
+  "required": "{label} is required.",
+  "unknown": "{label} is not allowed.",
+  "empty": "{label} can not be empty.",
+  "email": "{label} is not a valid email address."
+}
