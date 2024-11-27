@@ -1,10 +1,18 @@
-any.required
-string.base, number.base, boolean.base
-string.min, string.max, array.min, array.max
-any.only
-string.pattern.base, string.pattern.name
-number.min, number.max, date.min, date.max
-any.empty, string.empty, array.empty
-object.unknown
-array.unique
-custom
+- Response should be uniform for error and succcess!
+- All response error or success will be translated
+- Email template with translations for all mail events
+- Modify the custom Exception filter for all kinds of errors with translations
+    - Translations for Custom errors
+    - Joi validations errors
+    - Database errors
+    - Token errors
+- Authentications
+    - Register
+    - Login with email pass
+    - Login with otp
+    - Login with magic link
+    - Social Login
+    - Forget/Reset Password
+    - 2FA Security
+    - Session Management
+    - Verify After Register (Email or Phone) - Optional From .env
