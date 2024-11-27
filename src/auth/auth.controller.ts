@@ -40,7 +40,7 @@ export class AuthController {
   @JoiSchema(CreateUserEmailPassValidation, 'body')
   @Post('register')
   async registerEmailandPassword(@Body() data: CreateUserDto) {
-    return null;
+    return { message: messages.success };
     const user = await this.authService.registerEmailandPassword(data);
 
     return {

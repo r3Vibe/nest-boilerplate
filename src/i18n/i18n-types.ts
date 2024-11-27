@@ -15,6 +15,14 @@ export type I18nTranslations = {
         "unknown": string;
         "empty": string;
         "email": string;
+        "phone": string;
+        "id": string;
+        "type": string;
+        "length": string;
+        "invalid": string;
+        "pattern": string;
+        "range": string;
+        "unique": string;
     };
 };
 /* prettier-ignore */

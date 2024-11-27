@@ -2,5 +2,13 @@
   "required": "{label} is required.",
   "unknown": "{label} is not allowed.",
   "empty": "{label} can not be empty.",
-  "email": "{label} is not a valid email address."
+  "email": "{label} is not a valid email address.",
+  "phone": "Invalid phone number.",
+  "id": "{label} is not a valid MongoDB ID.",
+  "type": "{label} must be a valid {type}.",
+  "length": "{label} must be between {min} and {max} characters.",
+  "invalid": "{label} is not a valid value. Allowed values are: {values}.",
+  "pattern": "{label} does not match the required pattern.",
+  "range": "{label} must be between {min} and {max}.",
+  "unique": "{label} must be unique."
 }

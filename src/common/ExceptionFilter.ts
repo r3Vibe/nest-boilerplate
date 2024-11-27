@@ -20,54 +20,96 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       typeof exceptionResponse === 'object' &&
       'metadata' in exceptionResponse
     ) {
+      let message = '';
+
       switch ((exceptionResponse.metadata as any).type) {
+        // when a field is required but not passed in the request
         case 'required':
-          response.status(status).json({
-            success: false,
-            message: this.i18n.t('error.required', {
-              args: { label: (exceptionResponse.metadata as any).label },
-            }),
-            timestamp: new Date().toISOString(),
+          message = this.i18n.t('error.required', {
+            args: { label: (exceptionResponse.metadata as any).label },
           });
-          return;
+          break;
 
+        // when a field is not allowed in the request
         case 'unknown':
-          response.status(status).json({
-            success: false,
-            message: this.i18n.t('error.unknown', {
-              args: { label: (exceptionResponse.metadata as any).label },
-            }),
-            timestamp: new Date().toISOString(),
+          message = this.i18n.t('error.unknown', {
+            args: { label: (exceptionResponse.metadata as any).label },
           });
-          return;
+          break;
+
+        // when a field is empty
         case 'empty':
-          response.status(status).json({
-            success: false,
-            message: this.i18n.t('error.empty', {
-              args: { label: (exceptionResponse.metadata as any).label },
-            }),
-            timestamp: new Date().toISOString(),
+          message = this.i18n.t('error.empty', {
+            args: { label: (exceptionResponse.metadata as any).label },
           });
-          return;
+          break;
 
+        // invalid email format
         case 'email':
-          response.status(status).json({
-            success: false,
-            message: this.i18n.t('error.email', {
-              args: { label: (exceptionResponse.metadata as any).label },
-            }),
-            timestamp: new Date().toISOString(),
+          message = this.i18n.t('error.email', {
+            args: { label: (exceptionResponse.metadata as any).label },
           });
-          return;
+          break;
 
-        default:
-          response.status(status).json({
-            success: false,
-            message: this.i18n.t('common.HELLO'),
-            timestamp: new Date().toISOString(),
+        // custom validation error
+        case 'custom':
+          message = this.i18n.t((exceptionResponse.metadata as any).message, {
+            args: { label: (exceptionResponse.metadata as any).label },
           });
-          return;
+          break;
+
+        // invalid type (e.g., string, number, boolean)
+        case 'type':
+          message = this.i18n.t('error.type', {
+            args: { label: (exceptionResponse.metadata as any).label },
+          });
+          break;
+
+        // length constraints (min, max)
+        case 'length':
+          message = this.i18n.t('error.length', {
+            args: {
+              label: (exceptionResponse.metadata as any).label,
+              min: 0,
+              max: 0,
+            },
+          });
+          break;
+
+        // invalid enum or allowed value
+        case 'invalid':
+          message = this.i18n.t('error.invalid', {
+            args: { label: (exceptionResponse.metadata as any).label },
+          });
+          break;
+
+        // invalid pattern (regex)
+        case 'pattern':
+          message = this.i18n.t('error.pattern', {
+            args: { label: (exceptionResponse.metadata as any).label },
+          });
+          break;
+
+        // number or date out of range
+        case 'range':
+          message = this.i18n.t('error.range', {
+            args: { label: (exceptionResponse.metadata as any).label },
+          });
+          break;
+
+        // array contains duplicate elements
+        case 'unique':
+          message = this.i18n.t('error.unique', {
+            args: { label: (exceptionResponse.metadata as any).label },
+          });
+          break;
       }
+
+      response.status(status).json({
+        success: false,
+        message,
+        timestamp: new Date().toISOString(),
+      });
     }
   }
 }
