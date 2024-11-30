@@ -23,6 +23,8 @@ export type I18nTranslations = {
         "pattern": string;
         "range": string;
         "unique": string;
+        "min": string;
+        "max": string;
     };
 };
 /* prettier-ignore */

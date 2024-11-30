@@ -147,11 +147,21 @@ export class ValidationPipe<T> implements PipeTransform<T> {
     const { error, value: validatedData } = this.schema.validate(value);
 
     if (error) {
-      const formattedErrors = error.details.map((detail) =>
-        detail.message.replace(/['"]/g, ''),
-      );
-      const errorMessage = formattedErrors.join(', ');
-      throw new BadRequestException(errorMessage);
+      const firstError = error.details[0];
+
+      const formattedErrors = firstError.message.replace(/['"]/g, '');
+      const label = firstError.context.label;
+
+      throw new BadRequestException({
+        message: formattedErrors,
+        metadata: {
+          label,
+          type: firstError.type,
+          path: firstError.path,
+          context: firstError.context,
+        },
+        type: 'Joi',
+      });
     }
     return validatedData;
   }

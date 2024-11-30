@@ -10,5 +10,7 @@
   "invalid": "{label} is not a valid value. Allowed values are: {values}.",
   "pattern": "{label} does not match the required pattern.",
   "range": "{label} must be between {min} and {max}.",
-  "unique": "{label} must be unique."
+  "unique": "{label} must be unique.",
+  "min": "{label} must be at least {limit} characters long.",
+  "max": "{label} can not be more then {limit} characters long."
 }

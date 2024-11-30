@@ -15,7 +15,7 @@ import {
 } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JoiSchema } from 'src/common/validation/joiSchema.validation';
-import { CreateUserEmailPassValidation } from './auth.validation';
+import { CreateUserValidation } from './auth.validation';
 import messages from 'src/common/messages';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ConfigService } from '@nestjs/config';
@@ -37,10 +37,10 @@ export class AuthController {
     description: 'Basic Email and Password Based Registration',
   })
   @HttpCode(HttpStatus.CREATED)
-  @JoiSchema(CreateUserEmailPassValidation, 'body')
+  @JoiSchema(CreateUserValidation, 'body')
   @Post('register')
   async registerEmailandPassword(@Body() data: CreateUserDto) {
-    return { message: messages.success };
+    // return { message: messages.success };
     const user = await this.authService.registerEmailandPassword(data);
 
     return {
