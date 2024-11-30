@@ -1,11 +1,11 @@
-- Response should be uniform for error and succcess!
-- All response error or success will be translated
-- Email template with translations for all mail events
+- Response should be uniform for error and succcess! &#x2714; 
+- All response error or success will be translated &#x2714;
+- Email template with translations for all mail events &#x2714;
 - Modify the custom Exception filter for all kinds of errors with translations
-    - Translations for Custom errors
-    - Joi validations errors
-    - Database errors
-    - Token errors
+    - Translations for Custom errors &#x2714;
+    - Joi validations errors &#x2714;
+    - Database errors &#x2714;
+    - Token errors &#x2714;
 - Authentications
     - Register
     - Login with email pass

@@ -1,0 +1,6 @@
+{
+  "subject": "Hbs testing",
+  "header": "Hbs testing Header",
+  "success_mail": "Email Sent Successfully!",
+  "error_mail": "Could Not Send Email!"
+}

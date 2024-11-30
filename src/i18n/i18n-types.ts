@@ -7,6 +7,10 @@ import { Path } from "nestjs-i18n";
 export type I18nTranslations = {
     "common": {
         "HELLO": string;
+    };
+    "email": {
+        "subject": string;
+        "header": string;
         "success_mail": string;
         "error_mail": string;
     };
@@ -32,6 +36,17 @@ export type I18nTranslations = {
         "forbidden": string;
         "notFound": string;
         "conflict": string;
+        "only": string;
+        "base": string;
+        "number": {
+            "base": string;
+            "min": string;
+            "max": string;
+            "greater": string;
+            "less": string;
+        };
+        "greater": string;
+        "less": string;
     };
 };
 /* prettier-ignore */

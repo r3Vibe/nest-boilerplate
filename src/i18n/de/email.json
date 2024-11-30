@@ -1,0 +1,6 @@
+{
+  "subject": "Hbs-Test",
+  "header": "Hbs-Test-Header",
+  "success_mail": "E-Mail erfolgreich versendet!",
+  "error_mail": "E-Mail konnte nicht versendet werden!"
+}

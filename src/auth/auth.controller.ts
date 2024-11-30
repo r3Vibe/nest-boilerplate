@@ -19,6 +19,9 @@ import { CreateUserValidation } from './auth.validation';
 import messages from 'src/common/messages';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ConfigService } from '@nestjs/config';
+import { CustomMailerService } from 'src/common/custom-mailer/custom-mailer.service';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from 'src/i18n/i18n-types';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -26,6 +29,8 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private config: ConfigService,
+    private mailService: CustomMailerService,
+    private i18n: I18nService<I18nTranslations>,
   ) {}
 
   @ApiCreatedResponse({
@@ -40,7 +45,15 @@ export class AuthController {
   @JoiSchema(CreateUserValidation, 'body')
   @Post('register')
   async registerEmailandPassword(@Body() data: CreateUserDto) {
-    // return { message: messages.success };
+    this.mailService.sendMails(
+      'test@ypmai.com',
+      this.i18n.t('email.subject'),
+      'register',
+      {
+        name: 'arnab',
+      },
+    );
+    return { message: messages.success };
     const user = await this.authService.registerEmailandPassword(data);
 
     return {

@@ -19,5 +19,14 @@
   "unauthorized": "You are not authorized. Please login.",
   "forbidden": "You are not allowed to perform this action.",
   "notFound": "Requested resource not found.",
-  "conflict": "Resource already exists."
+  "conflict": "Resource already exists.",
+  "only": "Only {label} is allowed.",
+  "base": "{label} must be a valid string.",
+  "number": {
+    "base": "{label} must be a valid number.",
+    "min": "{label} must be at least {limit}.",
+    "max": "{label} can not be more then {limit}."
+  },
+  "greater": "{label} must be greater than {limit}.",
+  "less": "{label} must be less than {limit}."
 }

@@ -62,7 +62,6 @@ import { JwtModule } from '@nestjs/jwt';
         transport: {
           host: configService.getOrThrow('email').smtpHost,
           port: configService.getOrThrow('email').smtpPort,
-          secure: configService.getOrThrow('email').secure,
           auth: {
             user: configService.getOrThrow('email').smtpUser,
             pass: configService.getOrThrow('email').smtpPassword,
@@ -72,7 +71,10 @@ import { JwtModule } from '@nestjs/jwt';
           from: `${configService.getOrThrow('email').smtpFromName} <${configService.getOrThrow('email').smtpFromEmail}>`,
         },
         template: {
-          dir: join(__dirname, 'email_templates'),
+          dir:
+            configService.getOrThrow('general').nodeEnv === 'production'
+              ? join(__dirname, 'email_templates')
+              : resolve(__dirname, '../src/email_templates'),
           adapter: new HandlebarsAdapter({ t: i18n.hbsHelper }),
           options: {
             strict: true,

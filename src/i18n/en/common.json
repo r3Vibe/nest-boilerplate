@@ -1,5 +1,3 @@
 {
-  "HELLO": "Hello World!",
-  "success_mail": "Email Sent Successfully!",
-  "error_mail": "Could Not Send Email!"
+  "HELLO": "Hello World!"
 }

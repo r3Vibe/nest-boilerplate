@@ -37,20 +37,45 @@ export class AllExceptionFilter extends BaseExceptionFilter {
       if (exceptionResponse.type === 'Joi') {
         // joi validation error
         status = HttpStatus.BAD_REQUEST;
+
+        console.log(exceptionResponse);
+
         if (exceptionResponse.metadata.type === 'object.unknown') {
           message = this.i18n.t('error.unknown', {
             args: {
               label: ((exceptionResponse as any).metadata as any).label,
             },
           });
-        } else if (exceptionResponse.metadata.type === 'string.min') {
+        } else if (
+          exceptionResponse.metadata.type === 'string.min' ||
+          exceptionResponse.metadata.type === 'string.max'
+        ) {
           message = this.i18n.t(exceptionResponse.message, {
             args: {
               label: ((exceptionResponse as any).metadata as any).label,
               limit: ((exceptionResponse as any).metadata as any).context.limit,
             },
           });
-        } else if (exceptionResponse.metadata.type === 'string.max') {
+        } else if (exceptionResponse.metadata.type === 'any.only') {
+          message = this.i18n.t(exceptionResponse.message, {
+            args: {
+              label: exceptionResponse.metadata.context.valids.join(','),
+            },
+          });
+        } else if (
+          exceptionResponse.metadata.type === 'number.min' ||
+          exceptionResponse.metadata.type === 'number.max'
+        ) {
+          message = this.i18n.t(exceptionResponse.message, {
+            args: {
+              label: ((exceptionResponse as any).metadata as any).label,
+              limit: ((exceptionResponse as any).metadata as any).context.limit,
+            },
+          });
+        } else if (
+          exceptionResponse.metadata.type === 'number.greater' ||
+          exceptionResponse.metadata.type === 'number.less'
+        ) {
           message = this.i18n.t(exceptionResponse.message, {
             args: {
               label: ((exceptionResponse as any).metadata as any).label,

@@ -19,5 +19,14 @@
   "unauthorized": "Du bist nicht autorisiert. Bitte melde dich an.",
   "forbidden": "Du bist nicht berechtigt, diese Aktion auszuführen.",
   "notFound": "Die angeforderte Ressource wurde nicht gefunden.",
-  "conflict": "Die angeforderte Ressource existiert bereits."
+  "conflict": "Die angeforderte Ressource existiert bereits.",
+  "only": "Nur {label} ist erlaubt.",
+  "base": "{label} muss eine gültige Zeichenkette sein.",
+  "number": {
+    "base": "{label} muss eine gültige Zahl sein.",
+    "min": "{label} muss mindestens {limit} sein.",
+    "max": "{label} darf nicht mehr als {limit} sein.",
+    "greater": "{label} muss größer als {limit} sein.",
+    "less": "{label} muss kleiner als {limit} sein."
+  }
 }
