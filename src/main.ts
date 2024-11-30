@@ -12,7 +12,7 @@ import { CustomLoggerService } from './common/custom-logger/custom-logger.servic
 import { TransformResponseInterceptor } from './common/CustomResponse';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from './i18n/i18n-types';
-import { GlobalExceptionFilter } from './common/ExceptionFilter';
+import { AllExceptionFilter } from './common/ExceptionFilter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -25,7 +25,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   // global exception filter
-  app.useGlobalFilters(new GlobalExceptionFilter(i18n));
+  app.useGlobalFilters(new AllExceptionFilter(i18n));
 
   // custom response
   app.useGlobalInterceptors(new TransformResponseInterceptor(i18n));

@@ -25,6 +25,13 @@ export type I18nTranslations = {
         "unique": string;
         "min": string;
         "max": string;
+        "generic": string;
+        "tooManyRequests": string;
+        "database_issue": string;
+        "unauthorized": string;
+        "forbidden": string;
+        "notFound": string;
+        "conflict": string;
     };
 };
 /* prettier-ignore */

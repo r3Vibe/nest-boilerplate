@@ -10,7 +10,14 @@
   "invalid": "{label} ist kein gültiger Wert. Erlaubte Werte sind: {values}.",
   "pattern": "{label} entspricht nicht dem erforderlichen Muster.",
   "range": "{label} muss zwischen {min} und {max} liegen.",
-  "unique": "{label} muss eindeutig sein.",
+  "unique": "{label} existiert bereits.",
   "min": "{label} muss mindestens {limit} Zeichen lang sein.",
-  "max": "{label} darf nicht mehr als {limit} Zeichen lang sein."
+  "max": "{label} darf nicht mehr als {limit} Zeichen lang sein.",
+  "generic": "Etwas ist schief gelaufen.",
+  "tooManyRequests": "Zu viele Anfragen. Bitte versuche es later.",
+  "database_issue": "Datenbank-Fehler. Bitte versuche es later.",
+  "unauthorized": "Du bist nicht autorisiert. Bitte melde dich an.",
+  "forbidden": "Du bist nicht berechtigt, diese Aktion auszuführen.",
+  "notFound": "Die angeforderte Ressource wurde nicht gefunden.",
+  "conflict": "Die angeforderte Ressource existiert bereits."
 }

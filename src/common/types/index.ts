@@ -8,3 +8,9 @@ export type CustomJoiValidationError = {
     type: string;
   };
 };
+
+export type ResponseObj = {
+  success: boolean;
+  timestamp: string;
+  message: string | object;
+};
