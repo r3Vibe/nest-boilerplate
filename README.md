@@ -16,3 +16,9 @@
     - 2FA Security
     - Session Management
     - Verify After Register (Email or Phone) - Optional From .env
+- Joi Validation Errors
+    - String &#x2714;
+    - Numbers &#x2714;
+    - Boolean
+    - Date
+    - Array
