@@ -1,0 +1,22 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Check linting
+echo "Running lint check..."
+yarn lint || { echo "Linting failed!"; exit 1; }
+
+# Check formatting
+echo "Checking formatting..."
+yarn format:check || { echo "Formatting failed!"; exit 1; }
+
+# Run tests
+echo "Running tests..."
+yarn test || { echo "Tests failed!"; exit 1; }
+
+# Build the project
+echo "Building the project..."
+yarn build || { echo "Build failed!"; exit 1; }
+
+# Add changes and commit
+echo "Staging and committing changes..."
+git add .
