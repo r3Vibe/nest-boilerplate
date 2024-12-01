@@ -1,115 +1,30 @@
 import * as Joi from 'joi';
-
-const CreateUserEmailPassValidation = Joi.object({
-  optionalNumber: Joi.number().optional().allow(null).label('optionalNumber'),
-});
-
-function enhanceSchemaWithMessages(schema: any) {
-  const enhancedSchema = Object.keys(schema.describe().keys).reduce(
-    (acc: any, key: string) => {
-      const fieldSchema = schema.extract(key);
-      const fieldSchemaDescribe = fieldSchema.describe();
-
-      const errorMsgs: any = {};
-
-      // handle strings
-      if (fieldSchemaDescribe.type === 'string') {
-        errorMsgs['string.base'] = 'error.base';
-        if (fieldSchemaDescribe.flags.presence === 'required') {
-          errorMsgs['any.required'] = 'error.required';
-        }
-
-        if (fieldSchemaDescribe.flags.only) {
-          errorMsgs['any.only'] = 'error.only';
-        }
-
-        if (!fieldSchemaDescribe.allow) {
-          errorMsgs['string.empty'] = 'error.empty';
-        }
-
-        if (fieldSchemaDescribe.rules && fieldSchemaDescribe.rules.length > 0) {
-          fieldSchemaDescribe.rules.forEach((rule: any) => {
-            if (rule.name === 'min') {
-              errorMsgs['string.min'] = 'error.min';
-            }
-
-            if (rule.name === 'max') {
-              errorMsgs['string.max'] = 'error.max';
-            }
-
-            if (rule.name === 'pattern') {
-              errorMsgs['string.pattern.base'] = 'error.pattern';
-            }
-
-            if (rule.name === 'email') {
-              errorMsgs['string.email'] = 'error.email';
-            }
-
-            if (rule.name === 'uri') {
-              errorMsgs['string.uri'] = 'error.uri';
-            }
-
-            if (rule.name === 'length') {
-              errorMsgs['string.length'] = 'error.length';
-            }
-          });
-        }
-      }
-
-      // handle numbers
-      if (fieldSchemaDescribe.type === 'number') {
-        errorMsgs['number.base'] = 'error.number.base';
-
-        if (fieldSchemaDescribe.flags.presence === 'required') {
-          errorMsgs['any.required'] = 'error.required';
-        }
-
-        if (fieldSchemaDescribe.rules && fieldSchemaDescribe.rules.length > 0) {
-          fieldSchemaDescribe.rules.forEach((rule: any) => {
-            if (rule.name === 'min') {
-              errorMsgs['number.min'] = 'error.number.min';
-            }
-
-            if (rule.name === 'max') {
-              errorMsgs['number.max'] = 'error.number.max';
-            }
-
-            if (rule.name === 'pattern') {
-              errorMsgs['number.pattern.base'] = 'error.pattern';
-            }
-
-            if (rule.name === 'sign' && rule.args.sign === 'positive') {
-              errorMsgs['number.sign'] = 'error.sign.positive';
-            }
-
-            if (rule.name === 'sign' && rule.args.sign === 'negative') {
-              errorMsgs['number.sign'] = 'error.sign.negative';
-            }
-
-            if (rule.name === 'greater') {
-              errorMsgs['number.greater'] = 'error.greater';
-            }
-
-            if (rule.name === 'less') {
-              errorMsgs['number.less'] = 'error.less';
-            }
-          });
-        }
-      }
-
-      // Enhance the schema with custom messages
-      const enhancedFieldSchema = fieldSchema.messages(errorMsgs as any);
-
-      acc[key] = enhancedFieldSchema;
-
-      return acc;
-    },
-    {},
-  );
-
-  return Joi.object(enhancedSchema);
-}
+import { enhanceSchemaWithMessages } from 'src/common/joi.i18n';
 
 export const CreateUserValidation = enhanceSchemaWithMessages(
-  CreateUserEmailPassValidation,
+  Joi.object({
+    isEnabled: Joi.boolean().required().label('isEnabled'),
+
+    mustBeTrue: Joi.boolean().required().valid(true).label('mustBeTrue'),
+
+    mustBeFalse: Joi.boolean().required().valid(false).label('mustBeFalse'),
+    tt: Joi.string().required().label('tt').valid('tt', 'ttt'),
+    ttnum: Joi.number().required().label('ttnum').valid(5, 10),
+
+    uri: Joi.string().uri().required().label('uri'),
+    email: Joi.string().email().required().label('email'),
+
+    x: Joi.number().min(0).max(10).required().label('x'),
+
+    my: Joi.array()
+      .min(2)
+      .max(10)
+      .required()
+      .items(
+        Joi.object({
+          y: Joi.string().uri().required().label('y'),
+        }),
+      )
+      .label('my'),
+  }),
 );

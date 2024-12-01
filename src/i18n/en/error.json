@@ -1,18 +1,12 @@
 {
   "required": "{label} is required.",
   "unknown": "{label} is not allowed.",
-  "empty": "{label} can not be empty.",
-  "email": "{label} is not a valid email address.",
   "phone": "Invalid phone number.",
   "id": "{label} is not a valid MongoDB ID.",
   "type": "{label} must be a valid {type}.",
-  "length": "{label} must be between {min} and {max} characters.",
   "invalid": "{label} is not a valid value. Allowed values are: {values}.",
-  "pattern": "{label} does not match the required pattern.",
   "range": "{label} must be between {min} and {max}.",
   "unique": "{label} already exists.",
-  "min": "{label} must be at least {limit} characters long.",
-  "max": "{label} can not be more then {limit} characters long.",
   "generic": "Something went wrong.",
   "tooManyRequests": "Too many requests. Please try again later.",
   "database_issue": "Database issue. Please try again later.",
@@ -20,13 +14,48 @@
   "forbidden": "You are not allowed to perform this action.",
   "notFound": "Requested resource not found.",
   "conflict": "Resource already exists.",
-  "only": "Only {label} is allowed.",
-  "base": "{label} must be a valid string.",
+  "only": "Only {valid} is allowed for {label}.",
+  "string": {
+    "email": "{label} is not a valid email address.",
+    "pattern": "{label} does not match the required pattern.",
+    "length": "{label} must be between {min} and {max} characters.",
+    "min": "{label} must be at least {limit} characters long.",
+    "max": "{label} can not be more then {limit} characters long.",
+    "empty": "{label} can not be empty.",
+    "base": "{label} must be a valid string.",
+    "uri": "{label} is not a valid URI."
+  },
   "number": {
     "base": "{label} must be a valid number.",
     "min": "{label} must be at least {limit}.",
-    "max": "{label} can not be more then {limit}."
+    "max": "{label} can not be more then {limit}.",
+    "pattern": "{label} does not match the required pattern.",
+    "sign": {
+      "positive": "{label} must be positive.",
+      "negative": "{label} must be negative."
+    },
+    "greater": "{label} must be greater than {limit}.",
+    "less": "{label} must be less than {limit}."
   },
-  "greater": "{label} must be greater than {limit}.",
-  "less": "{label} must be less than {limit}."
+  "date": {
+    "base": "{label} is not a valid Date.",
+    "iso": "{label} is not a valid ISO Date.",
+    "javascript": "{label} is not a valid JavaScript Date.",
+    "min": "{label} must be on or after {limit}.",
+    "max": "{label} must be on or before {limit}.",
+    "greater": "{label} must be after {limit}.",
+    "less": "{label} must be before {limit}."
+  },
+  "boolean": {
+    "base": "{label} must be a valid boolean."
+  },
+  "array": {
+    "base": "{label} must be an array.",
+    "min": "{label} must have at least {limit} items.",
+    "max": "{label} can not have more then {limit} items.",
+    "length": "{label} must have {limit} items."
+  },
+  "object": {
+    "base": "{label} must be an object."
+  }
 }

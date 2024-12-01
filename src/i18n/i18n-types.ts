@@ -17,18 +17,12 @@ export type I18nTranslations = {
     "error": {
         "required": string;
         "unknown": string;
-        "empty": string;
-        "email": string;
         "phone": string;
         "id": string;
         "type": string;
-        "length": string;
         "invalid": string;
-        "pattern": string;
         "range": string;
         "unique": string;
-        "min": string;
-        "max": string;
         "generic": string;
         "tooManyRequests": string;
         "database_issue": string;
@@ -37,16 +31,49 @@ export type I18nTranslations = {
         "notFound": string;
         "conflict": string;
         "only": string;
-        "base": string;
+        "string": {
+            "email": string;
+            "pattern": string;
+            "length": string;
+            "min": string;
+            "max": string;
+            "empty": string;
+            "base": string;
+            "uri": string;
+        };
         "number": {
             "base": string;
+            "min": string;
+            "max": string;
+            "pattern": string;
+            "sign": {
+                "positive": string;
+                "negative": string;
+            };
+            "greater": string;
+            "less": string;
+        };
+        "date": {
+            "base": string;
+            "iso": string;
+            "javascript": string;
             "min": string;
             "max": string;
             "greater": string;
             "less": string;
         };
-        "greater": string;
-        "less": string;
+        "boolean": {
+            "base": string;
+        };
+        "array": {
+            "base": string;
+            "min": string;
+            "max": string;
+            "length": string;
+        };
+        "object": {
+            "base": string;
+        };
     };
 };
 /* prettier-ignore */

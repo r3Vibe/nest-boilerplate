@@ -1,32 +1,61 @@
 {
   "required": "{label} ist erforderlich.",
   "unknown": "{label} ist nicht erlaubt.",
-  "empty": "{label} darf nicht leer sein.",
-  "email": "{label} ist keine gültige E-Mail-Adresse.",
   "phone": "Ungültige Telefonnummer.",
   "id": "{label} ist keine gültige MongoDB-ID.",
   "type": "{label} muss ein gültiger {type} sein.",
-  "length": "{label} muss zwischen {min} und {max} Zeichen lang sein.",
   "invalid": "{label} ist kein gültiger Wert. Erlaubte Werte sind: {values}.",
-  "pattern": "{label} entspricht nicht dem erforderlichen Muster.",
   "range": "{label} muss zwischen {min} und {max} liegen.",
   "unique": "{label} existiert bereits.",
-  "min": "{label} muss mindestens {limit} Zeichen lang sein.",
-  "max": "{label} darf nicht mehr als {limit} Zeichen lang sein.",
-  "generic": "Etwas ist schief gelaufen.",
-  "tooManyRequests": "Zu viele Anfragen. Bitte versuche es later.",
-  "database_issue": "Datenbank-Fehler. Bitte versuche es later.",
-  "unauthorized": "Du bist nicht autorisiert. Bitte melde dich an.",
-  "forbidden": "Du bist nicht berechtigt, diese Aktion auszuführen.",
-  "notFound": "Die angeforderte Ressource wurde nicht gefunden.",
-  "conflict": "Die angeforderte Ressource existiert bereits.",
-  "only": "Nur {label} ist erlaubt.",
-  "base": "{label} muss eine gültige Zeichenkette sein.",
+  "generic": "Etwas ist schiefgelaufen.",
+  "tooManyRequests": "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
+  "database_issue": "Datenbankproblem. Bitte versuchen Sie es später erneut.",
+  "unauthorized": "Sie sind nicht autorisiert. Bitte melden Sie sich an.",
+  "forbidden": "Sie dürfen diese Aktion nicht ausführen.",
+  "notFound": "Angeforderte Ressource nicht gefunden.",
+  "conflict": "Ressource existiert bereits.",
+  "only": "Nur {valid} ist erlaubt für {label}.",
+  "string": {
+    "email": "{label} ist keine gültige E-Mail-Adresse.",
+    "pattern": "{label} entspricht nicht dem erforderlichen Muster.",
+    "length": "{label} muss zwischen {min} und {max} Zeichen lang sein.",
+    "min": "{label} muss mindestens {limit} Zeichen lang sein.",
+    "max": "{label} darf nicht mehr als {limit} Zeichen lang sein.",
+    "empty": "{label} darf nicht leer sein.",
+    "base": "{label} muss ein gültiger Text sein.",
+    "uri": "{label} ist kein gültiger URI."
+  },
   "number": {
     "base": "{label} muss eine gültige Zahl sein.",
     "min": "{label} muss mindestens {limit} sein.",
     "max": "{label} darf nicht mehr als {limit} sein.",
+    "pattern": "{label} entspricht nicht dem erforderlichen Muster.",
+    "sign": {
+      "positive": "{label} muss positiv sein.",
+      "negative": "{label} muss negativ sein."
+    },
     "greater": "{label} muss größer als {limit} sein.",
     "less": "{label} muss kleiner als {limit} sein."
+  },
+  "date": {
+    "base": "{label} ist kein gültiges Datum.",
+    "iso": "{label} ist kein gültiges ISO-Datum.",
+    "javascript": "{label} ist kein gültiges JavaScript-Datum.",
+    "min": "{label} muss am oder nach {limit} sein.",
+    "max": "{label} muss am oder vor {limit} sein.",
+    "greater": "{label} muss nach {limit} sein.",
+    "less": "{label} muss vor {limit} sein."
+  },
+  "boolean": {
+    "base": "{label} muss ein gültiger Wert sein."
+  },
+  "array": {
+    "base": "{label} muss ein Array sein.",
+    "min": "{label} muss mindestens {limit} Elemente haben.",
+    "max": "{label} darf nicht mehr als {limit} Elemente haben.",
+    "length": "{label} muss {limit} Elemente haben."
+  },
+  "object": {
+    "base": "{label} muss ein Objekt sein."
   }
 }

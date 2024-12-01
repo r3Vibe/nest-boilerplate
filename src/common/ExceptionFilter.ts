@@ -38,8 +38,6 @@ export class AllExceptionFilter extends BaseExceptionFilter {
         // joi validation error
         status = HttpStatus.BAD_REQUEST;
 
-        console.log(exceptionResponse);
-
         if (exceptionResponse.metadata.type === 'object.unknown') {
           message = this.i18n.t('error.unknown', {
             args: {
@@ -59,7 +57,8 @@ export class AllExceptionFilter extends BaseExceptionFilter {
         } else if (exceptionResponse.metadata.type === 'any.only') {
           message = this.i18n.t(exceptionResponse.message, {
             args: {
-              label: exceptionResponse.metadata.context.valids.join(','),
+              valid: exceptionResponse.metadata.context.valids.join(','),
+              label: ((exceptionResponse as any).metadata as any).label,
             },
           });
         } else if (
@@ -86,6 +85,11 @@ export class AllExceptionFilter extends BaseExceptionFilter {
           message = this.i18n.t(exceptionResponse.message, {
             args: {
               label: ((exceptionResponse as any).metadata as any).label,
+              limit: Array.isArray(
+                ((exceptionResponse as any).metadata as any).context.limit,
+              )
+                ? ((exceptionResponse as any).metadata as any).context.limit[0]
+                : ((exceptionResponse as any).metadata as any).context.limit,
             },
           });
         }
