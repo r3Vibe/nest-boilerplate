@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # Check linting
 echo "Running lint check..."
 yarn lint || { echo "Linting failed!"; exit 1; }
